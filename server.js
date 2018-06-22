@@ -3,16 +3,10 @@ var path = require('path');
 var app = express();
 var db = require('./db');
 
-global.rootDir = path.resolve(__dirname);
-global.dbDir = path.resolve(__dirname + '/db');
-global.modelDir = path.resolve(__dirname + "/app/models");
-global.controllerDir = path.resolve(__dirname + "/app/controllers");
-global.viewDir = path.resolve(__dirname + "/app/views");
-global.helperDir = path.resolve(__dirname + "/app/helpers");
+global.include = require('./paths')
 
 app.use('/assets', require("./assets/assets"));
-app.use('/user', require(global.controllerDir + "/user/user_routes"));
-app.use('/', require(global.controllerDir + "/newsfeed/newsfeed_routes"));
+app.use('/login', require(global.include.controller.login.routes));
 
 db.connect(function(err) {
   if (err) {
