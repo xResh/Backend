@@ -1,5 +1,5 @@
-var db = require(global.include.db);
-var timestamp = require(global.include.helper.timestamp);
+const db = require(global.include.db);
+const timestamp = require(global.include.helper.timestamp);
 
 var user = function(sql_result){
 	//user class definition

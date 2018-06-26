@@ -1,3 +1,5 @@
+const path = require('path');
+
 let rootDir = path.resolve(__dirname);
 let dbDir = path.resolve(__dirname + '/db');
 let modelDir = path.resolve(__dirname + "/app/models");
@@ -15,7 +17,7 @@ module.exports = {
 
 	controller: {
 		login: {
-			controller: path.resolve(controllerDir + '/login/login_controller'),
+			controller: path.resolve(controllerDir + '/login/login'),
 			routes: path.resolve(controllerDir + '/login/login_routes')
 		}
 	},
