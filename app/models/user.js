@@ -7,20 +7,25 @@ var user = function(sql_result){
 	this.first_name = sql_result['first_name'];
 	this.last_name = sql_result['last_name'];
 	this.created_at = timestamp.timestamp_to_date(sql_result['created_date']);
+	this.auth_token = null;
+
+	this.get_auth_token = function(resp){
+		return this.auth_token;
+	}
 }
 
 exports.create = function(first_name, last_name, resp){
 	values = [first_name, last_name];
 	db.get().query('INSERT INTO user (first_name, last_name) VALUES (?,?)', values, function(err, result){
 		if(err) resp(err);
-		resp(null, result); //here it should return the user created, however need to test first
+		resp(null, result); // here it should return the user created, however need to test first
 	});
 }
 
 exports.get_user_by_id = function(id, resp){
 	values = [id];
-	db.get().query("SELECT * FROM user WHERE id=?", values, function(err,result){
+	db.get().query("SELECT * FROM users WHERE id=?", values, function(err,result){
 		if(err) resp(err);
-		resp(null, user(result));
+		resp(null, user(result[0]));
 	});
 }

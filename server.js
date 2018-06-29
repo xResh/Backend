@@ -5,7 +5,7 @@ var db = require('./db');
 
 global.include = require('./paths')
 
-app.use('/assets', require("./assets/assets"));
+//app.use('/assets', require("./assets/assets"));
 app.use('/login', require(global.include.controller.login.routes));
 
 db.connect(function(err) {
@@ -18,5 +18,3 @@ db.connect(function(err) {
     });
   }
 });
-
-var server = app.listen(process.env.PORT || 8000, function () {});

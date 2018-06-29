@@ -12,7 +12,8 @@ module.exports = {
 	db: dbDir,
 
 	model: {
-		user: path.resolve(modelDir + '/user')
+		user: path.resolve(modelDir + '/user'),
+		facebook_user: path.resolve(modelDir + '/facebook_user')
 	},
 
 	controller: {
