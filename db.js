@@ -1,9 +1,9 @@
 var mysql = require('mysql');
 var async = require('async');
 
-var DEVELOPMENT_DB = "opinionated_development";
+let DEVELOPMENT_DB = "phare_development";
 
-var state = {
+let state = {
   pool: null,
   mode: null
 };
@@ -24,7 +24,7 @@ exports.get = function(){
 }
 
 exports.drop = function(tables, done){
-  var pool = state.pool;
+  let pool = state.pool;
   if(!pool) return done(new Error('Missing database connection...'));
 
   async.each(tables, function(name,cb){

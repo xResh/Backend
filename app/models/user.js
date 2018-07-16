@@ -1,23 +1,29 @@
-var db = require(global.dbDir);
+const db = require(global.include.db);
+const timestamp = require(global.include.helper.timestamp);
+const error = require(global.include.helper.error);
 
-exports.create = function(username, password, email, screen_name, done){
-  var values = [username, password, email, screen_name];
-  db.get().query('INSERT INTO users (username, password, email, screen_name) VALUES (?, ?, ?, ?)', values, function(err,result){
-    if (err) return done(err);
-    done(null, result.insertId);
-  });
+var user = function(sql_result){
+	//user class definition
+	this.id = sql_result.id;
+	this.first_name = sql_result.first_name;
+	this.last_name = sql_result.last_name;
+	this.created_at = timestamp.timestamp_to_date(sql_result.created_date);
+
+	return this;
 }
 
-exports.get = function(id, done){
-  db.get().query('SELECT * FROM users WHERE id = ?', id, function(err, result){
-    if (err) return done(err);
-    done(null, result);
-  })
+exports.get_user_by_id = function(id, resp){
+	values = [id];
+	db.get().query("SELECT * FROM users WHERE id=?", values, function(err,result){
+		error.check(err,resp);
+		resp(null, user(result[0]));
+	});
 }
 
-exports.get_user_by_username = function(username, done){
-  db.get().query('SELECT * FROM users WHERE username=?', username, function(err, rows){
-    if (err) return done(err);
-    done(null,rows);
-  });
+exports.create = function(first_name, last_name, resp){
+	values = [first_name, last_name];
+	db.get().query('INSERT INTO users (first_name, last_name) VALUES (?,?)', values, function(err, result){
+		error.check(err, resp);
+		resp(null, result.insertId);
+	});
 }
