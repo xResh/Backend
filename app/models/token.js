@@ -1,7 +1,7 @@
 const db = require(global.include.db);
 
 var token = function(sql_result){
-
+  return this;
 }
 
 exports.create = function(token, user_id, resp){
