@@ -9,14 +9,17 @@ exports.authenticate_with_facebook = function(req, res){
 
 	let token = params.access_token;
 	fb_user.get_facebook_user_by_token(token, function(err, fb_user){
-		if(err) res.send(400);
+		if(err){
+			res.sendStatus(400);
+			return;
+		}
 		fb_user.get_user(function(err, user){ // should probably just be fb_user get_auth_token
-			if(err) res.send(501);
+			if(err) res.sendStatus(501);
 			res.send(user.get_auth_token());
 		});
 	});
 }
 
 exports.authenticate_generic = function(req, res){
-	
+
 }

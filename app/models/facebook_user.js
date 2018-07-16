@@ -5,28 +5,35 @@ const db = require(global.include.db);
 var facebook_user = function(sql_result){
 	this.fb_id = sql_result.fb_id;
 	this.user_id = sql_result.user_id;
-
 	this.get_user = function(resp){
 		user.get_user_by_id(this.user_id, function(err, result){
 			if(err) resp(err);
 			resp(null, result);
 		});
 	}
+	return this;
 }
 
 var get_facebook_user_by_id = function(id, resp){
 	values = [id];
 	db.get().query('SELECT * FROM fb_users WHERE fb_id=?', values, function(err,result){
-		if(result.length == 0)	resp(null);
-		resp(facebook_user(result[0]));
+		if(result.length === 0)	{
+			resp(err, null);
+			return;
+		}
+		resp(null, facebook_user(result[0]));
 	});
 }
 
 var create = function(fb_id, user_id, resp){
 	values  = [fb_id, user_id];
 	db.get().query('INSERT INTO fb_users (fb_id, user_id) VALUES (?,?)', values, function(err, result){
-		if(err) resp(err);
-		resp(null, result); // should return fb_user object
+		if(err){
+			resp(err);
+			return;
+		}
+		console.log(facebook_user({'fb_id' : fb_id, 'user_id': user_id}));
+		resp(null, facebook_user({'fb_id' : fb_id, 'user_id': user_id}));
 	});
 }
 
@@ -38,12 +45,17 @@ exports.get_facebook_user_by_token = function(token, resp){
 
 	request.get(request_info, function(err, response, body){
 		if(err) resp(err);
-		get_facebook_user_by_id(body.id, function(current_user){
-			if(user) resp(null, current_user);
-
+		body = JSON.parse(body);
+		get_facebook_user_by_id(body.id, function(current_fb_user){
+			if(current_fb_user) {
+				resp(null, current_fb_user);
+				return;
+			}
+			// if there is no fb_user associated with this token then we create an fb_user
 			names = body.name.split(" ");
-			user.create(names[0], names[names.length - 1], function(err, new_user){
-				create(new_user.id, body.id, resp);
+			// must create a user before creating an fb_user
+			user.create(names[0], names[names.length - 1], function(err, new_user_id){
+				create(body.id, new_user_id, resp); // create the fb_user
 			});
 		});
 	});
