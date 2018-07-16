@@ -1,5 +1,6 @@
 const db = require(global.include.db);
 const timestamp = require(global.include.helper.timestamp);
+const error = require(global.include.helper.error);
 
 var user = function(sql_result){
 	//user class definition
@@ -14,7 +15,7 @@ var user = function(sql_result){
 exports.get_user_by_id = function(id, resp){
 	values = [id];
 	db.get().query("SELECT * FROM users WHERE id=?", values, function(err,result){
-		if(err) resp(err);
+		error.check(err,resp);
 		resp(null, user(result[0]));
 	});
 }
@@ -22,10 +23,7 @@ exports.get_user_by_id = function(id, resp){
 exports.create = function(first_name, last_name, resp){
 	values = [first_name, last_name];
 	db.get().query('INSERT INTO users (first_name, last_name) VALUES (?,?)', values, function(err, result){
-		if(err){
-			resp(err);
-			return;
-		}
+		error.check(err, resp);
 		resp(null, result.insertId);
 	});
 }

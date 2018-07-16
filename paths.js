@@ -25,6 +25,7 @@ module.exports = {
 	},
 
 	helper: {
+		error: path.resolve(helperDir + '/error'),
 		timestamp: path.resolve(helperDir + '/timestamp')
 	}
 }

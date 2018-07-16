@@ -9,23 +9,26 @@ exports.authenticate_with_facebook = function(req, res){
 		res.sendStatus(400);
 	}
 
-	let token = params.access_token;
-	fb_user.get_facebook_user_by_token(token, function(err, fb_user){
+	let req_token = params.access_token;
+	fb_user.get_facebook_user_by_token(req_token, function(err, fb_user){
 		if(err){
 			res.sendStatus(400);
 			return;
 		}
 
-		fb_user.get_user(function(err, user){ // should probably just be fb_user get_auth_token
-			if(err) res.sendStatus(501);
+		fb_user.get_user(function(err, user){
+			if(err){
+				res.sendStatus(501);
+				return;
+			}
 
 			let auth_token = uuid4();
-			token.create(auth_token, user, function(err){
+			token.create(auth_token, user.id, function(err){
 				if(err){
 					res.sendStatus(501);
 					return;
 				}
-				
+
 				res.send(auth_token);
 			})
 		});

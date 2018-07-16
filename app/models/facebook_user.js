@@ -1,13 +1,14 @@
 const request = require('request');
 const user = require(global.include.model.user);
 const db = require(global.include.db);
+const error = require(global.include.helper.error);
 
 var facebook_user = function(sql_result){
 	this.fb_id = sql_result.fb_id;
 	this.user_id = sql_result.user_id;
 	this.get_user = function(resp){
 		user.get_user_by_id(this.user_id, function(err, result){
-			if(err) resp(err);
+			error.check(err,resp);
 			resp(null, result);
 		});
 	}
@@ -28,11 +29,7 @@ var get_facebook_user_by_id = function(id, resp){
 var create = function(fb_id, user_id, resp){
 	values  = [fb_id, user_id];
 	db.get().query('INSERT INTO fb_users (fb_id, user_id) VALUES (?,?)', values, function(err, result){
-		if(err){
-			resp(err);
-			return;
-		}
-		console.log(facebook_user({'fb_id' : fb_id, 'user_id': user_id}));
+		error.check(err,resp);
 		resp(null, facebook_user({'fb_id' : fb_id, 'user_id': user_id}));
 	});
 }
@@ -44,9 +41,17 @@ exports.get_facebook_user_by_token = function(token, resp){
 	};
 
 	request.get(request_info, function(err, response, body){
-		if(err) resp(err);
+		error.check(err,resp);
+
 		body = JSON.parse(body);
-		get_facebook_user_by_id(body.id, function(current_fb_user){
+		if(body.error){
+			resp(body.error);
+			return;
+		}
+
+		get_facebook_user_by_id(body.id, function(err, current_fb_user){
+			error.check(err,resp);
+
 			if(current_fb_user) {
 				resp(null, current_fb_user);
 				return;
