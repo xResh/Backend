@@ -7,11 +7,6 @@ var user = function(sql_result){
 	this.first_name = sql_result.first_name;
 	this.last_name = sql_result.last_name;
 	this.created_at = timestamp.timestamp_to_date(sql_result.created_date);
-	this.auth_token = null;
-
-	this.get_auth_token = function(resp){
-		return this.auth_token;
-	}
 
 	return this;
 }

@@ -1,5 +1,7 @@
 const user = require(global.include.model.user);
 const fb_user = require(global.include.model.facebook_user);
+const token = require(global.include.model.token);
+const uuid4 = require('uuid/v4');
 
 exports.authenticate_with_facebook = function(req, res){
 	let params = req.query;
@@ -13,9 +15,19 @@ exports.authenticate_with_facebook = function(req, res){
 			res.sendStatus(400);
 			return;
 		}
+
 		fb_user.get_user(function(err, user){ // should probably just be fb_user get_auth_token
 			if(err) res.sendStatus(501);
-			res.send(user.get_auth_token());
+
+			let auth_token = uuid4();
+			token.create(auth_token, user, function(err){
+				if(err){
+					res.sendStatus(501);
+					return;
+				}
+				
+				res.send(auth_token);
+			})
 		});
 	});
 }
