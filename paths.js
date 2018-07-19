@@ -25,7 +25,7 @@ module.exports = {
 	},
 
 	helper: {
-		error: path.resolve(helperDir + '/error'),
+		send_request: path.resolve(helperDir + '/send_request'),
 		timestamp: path.resolve(helperDir + '/timestamp')
 	}
 }

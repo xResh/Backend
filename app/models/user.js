@@ -12,18 +12,29 @@ var user = function(sql_result){
 	return this;
 }
 
-exports.get_user_by_id = function(id, resp){
-	values = [id];
-	db.get().query("SELECT * FROM users WHERE id=?", values, function(err,result){
-		error.check(err,resp);
-		resp(null, user(result[0]));
+var get_by_id = function(id){
+	return new Promise(function(resolve, reject){
+		values = [id];
+		db.get().query("SELECT * FROM users WHERE id=?", values, function(err,result){
+			if(err) reject(err);
+			resolve(user(result[0]));
+		});
 	});
 }
 
-exports.create = function(first_name, last_name, resp){
-	values = [first_name, last_name];
-	db.get().query('INSERT INTO users (first_name, last_name) VALUES (?,?)', values, function(err, result){
-		error.check(err, resp);
-		resp(null, result.insertId);
+var create = function(first_name, last_name){
+	new Promise(function(resolve, reject){
+		values = [first_name, last_name];
+		db.get().query('INSERT INTO users (first_name, last_name) VALUES (?,?)', values, function(err, result){
+			if(err) reject(err);
+			get_user_by_id(result.insertId)
+			.then(resolve)
+			.catch(reject);
+		});
 	});
 }
+
+module.exports = {
+	get_by_id: get_by_id,
+	create: create
+};

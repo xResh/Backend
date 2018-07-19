@@ -10,18 +10,18 @@ exports.authenticate_with_facebook = function(req, res){
 	}
 
 	let req_token = params.access_token;
-	fb_user.get_facebook_user_by_token(req_token, function(err, fb_user){
-		error.status_check(err, res);
-
-		fb_user.get_user(function(err, user){
-			error.status_check(err, res);
-
-			token.create(auth_token, user.id, function(err, auth_token){
-				error.status_check(err, res);
-				res.send(auth_token);
-			})
+	fb_user.get_by_token()
+		.then(function(fb_user){
+			return fb_user.get_user();
+		})
+		.then(token.create())
+		.then(function(auth_token){
+			res.send(auth_token);
+		})
+		.catch(function(err){
+			console.log(err);
+			res.sendStatus(400);
 		});
-	});
 }
 
 exports.authenticate_generic = function(req, res){

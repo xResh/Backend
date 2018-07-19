@@ -1,7 +1,7 @@
 const request = require('request');
 const user = require(global.include.model.user);
 const db = require(global.include.db);
-const error = require(global.include.helper.error);
+const send_request = require(global.include)
 
 var facebook_user = function(sql_result){
 	this.fb_id = sql_result.fb_id;
@@ -15,53 +15,57 @@ var facebook_user = function(sql_result){
 	return this;
 }
 
-var get_facebook_user_by_id = function(id, resp){
-	values = [id];
-	db.get().query('SELECT * FROM fb_users WHERE fb_id=?', values, function(err,result){
-		if(result.length === 0)	{
-			resp(err, null);
-			return;
-		}
-		resp(null, facebook_user(result[0]));
-	});
-}
-
-var create = function(fb_id, user_id, resp){
-	values  = [fb_id, user_id];
-	db.get().query('INSERT INTO fb_users (fb_id, user_id) VALUES (?,?)', values, function(err, result){
-		error.check(err,resp);
-		resp(null, facebook_user({'fb_id' : fb_id, 'user_id': user_id}));
-	});
-}
-
-exports.get_facebook_user_by_token = function(token, resp){
-	let request_info = {
-		url: 'https://graph.facebook.com/me',
-		qs: {'access_token': token}
-	};
-
-	request.get(request_info, function(err, response, body){
-		error.check(err,resp);
-
-		body = JSON.parse(body);
-		if(body.error){
-			resp(body.error);
-			return;
-		}
-
-		get_facebook_user_by_id(body.id, function(err, current_fb_user){
-			error.check(err,resp);
-
-			if(current_fb_user) {
-				resp(null, current_fb_user);
-				return;
-			}
-			// if there is no fb_user associated with this token then we create an fb_user
-			names = body.name.split(" ");
-			// must create a user before creating an fb_user
-			user.create(names[0], names[names.length - 1], function(err, new_user_id){
-				create(body.id, new_user_id, resp); // create the fb_user
-			});
+var get_by_id = function(id){
+	return new Promise(function(resolve, reject){
+		values = [id];
+		db.get().query('SELECT * FROM fb_users WHERE fb_id=?', values, function(err,result){
+			if(err) reject(err);
+			if(result.length == 0) reject('Facebook User does not exist');
+			resolve(facebook_user(result[0]));
 		});
 	});
 }
+
+var create = function(fb_id, user_id){
+	return new Promise(function(resolve, reject){
+		values  = [fb_id, user_id];
+		db.get().query('INSERT INTO fb_users (fb_id, user_id) VALUES (?,?)', values, function(err, result){
+			if(err) reject(err);
+			resolve(facebook_user({'fb_id' : fb_id, 'user_id': user_id}));
+		});
+	});
+}
+
+var get_from_response = function(body){
+	return new Promise(function(resolve, reject){
+		get_by_id(body.id)
+			.then(resolve)
+			.catch(function(err){
+				names = body.name.split(" ");
+				user.create(names[0], names[names.length - 1])
+					.then(function(user_id){
+						return create(body.id, user_id);
+					})
+					.then(resolve)
+					.catch(reject);
+			});
+	});
+}
+
+var get_by_token = function(token){
+	return new Promise(function(resolve, reject){
+		send_request.get({
+			url: 'https://graph.facebook.com/me',
+			qs: {'access_token': token}
+		})
+			.then(get__from_response)
+			.then(resolve)
+			.catch(reject);
+	});
+}
+
+module.exports = {
+	get_by_token: get_by_token,
+	create: create,
+	get_by_id: get_by_id
+};
