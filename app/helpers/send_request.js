@@ -1,3 +1,5 @@
+const request = require('request');
+
 exports.get = function(request_info){
   return new Promise(function(resolve, reject){
     request.get(request_info, function(err, response, body){
