@@ -24,7 +24,7 @@ var get_by_id = function(id){
 }
 
 var create = function(first_name, last_name){
-	new Promise(function(resolve, reject){
+	return new Promise(function(resolve, reject){
 		values = [first_name, last_name];
 		db.get().query('INSERT INTO users (first_name, last_name) VALUES (?,?)', values, function(err, result){
 			if(err) reject(err);

@@ -19,7 +19,7 @@ var get_by_id = function(id){
 		db.get().query('SELECT * FROM fb_users WHERE fb_id=?', values, function(err,result){
 			if(err) reject(err);
 			if(result.length == 0) resolve(null);
-			resolve(facebook_user(result[0]));
+			else resolve(facebook_user(result[0]));
 		});
 	});
 }
@@ -29,7 +29,7 @@ var create = function(fb_id, user_id){
 		values  = [fb_id, user_id];
 		db.get().query('INSERT INTO fb_users (fb_id, user_id) VALUES (?,?)', values, function(err, result){
 			if(err) reject(err);
-			resolve(facebook_user({'fb_id' : fb_id, 'user_id': user_id}));
+			resolve(get_by_id(fb_id));
 		});
 	});
 }
@@ -39,8 +39,8 @@ var get_from_response = async function(body){
 	if(fb_user) return fb_user;
 
 	names = body.name.split(" ");
-	let user = await user.create(names[0], names[names.length - 1])
-	fb_user = await create(body.id, user.id);
+	let new_user = await user.create(names[0], names[names.length - 1])
+	fb_user = await create(body.id, new_user.id);
 	return fb_user;
 }
 
