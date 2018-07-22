@@ -44,7 +44,7 @@ var get_from_response = async function(body){
 	return fb_user;
 }
 
-var get_by_token = async function(token){
+var get_by_request_token = async function(token){
 	let response = await send_request.get({
 		url: 'https://graph.facebook.com/me',
 		qs: {'access_token': token}
@@ -54,7 +54,7 @@ var get_by_token = async function(token){
 }
 
 module.exports = {
-	get_by_token: get_by_token,
+	get_by_request_token: get_by_request_token,
 	create: create,
 	get_by_id: get_by_id
 };
