@@ -16,6 +16,7 @@ exports.authenticate_with_facebook = async function(req, res){
 		let token = await auth_token.create(current_user);
 		res.send(token.token);
 	}catch(err){
+		console.log(err);
 		res.send(err);
 	}
 }
