@@ -37,6 +37,7 @@ var create = function(user){
 
 var verify_token = async function(token){
   token = await get_by_token(token);
+  if(token == null) throw("Invalid token");
   return token;
 }
 
