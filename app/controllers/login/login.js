@@ -10,8 +10,7 @@ exports.authenticate_with_facebook = async function(req, res){
 		res.sendStatus(400);
 	}
 	try{
-		let req_token = params.access_token;
-		let facebook_user = await fb_user.get_by_request_token(params.access_token);
+		let facebook_user = await fb_user.get_by_token(params.access_token);
 		let current_user = await facebook_user.get_user();
 		let token = await auth_token.create(current_user);
 		res.send(token.token);

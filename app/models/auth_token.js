@@ -7,6 +7,7 @@ const await = require('asyncawait/await');
 var auth_token = function(sql_result){
   this.token = sql_result.token;
   this.user_id = sql_result.user_id;
+  this.expired = sql_result.expired == 1? false : true;
   this.get_user = async function(){
     return await user.get_by_id(this.user_id);
   }
@@ -18,7 +19,7 @@ var get_by_token = function(token){
     values = [token];
     db.get().query("SELECT * FROM auth_tokens WHERE token=?", values, function(err, result){
       if(err) reject(err);
-      if(result.length == 0) reject('Invalid auth token');
+      if(result.length == 0) resolve(null);
       resolve(auth_token(result[0]));
     })
   });
@@ -37,6 +38,7 @@ var create = function(user){
 
 var verify_token = async function(token){
   token = await get_by_token(token);
+  if(token == null || token.expired) throw("Invalid token");
   return token;
 }
 
