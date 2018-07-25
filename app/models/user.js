@@ -18,7 +18,7 @@ var get_by_id = function(id){
 		values = [id];
 		db.get().query("SELECT * FROM users WHERE id=?", values, function(err,result){
 			if(err) reject(err);
-			if(result.length == 0) resolve(null);
+			if(result.length == 0) reject('No match');
 			resolve(user(result[0]));
 		});
 	});

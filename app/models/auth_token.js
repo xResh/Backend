@@ -18,7 +18,7 @@ var get_by_token = function(token){
     values = [token];
     db.get().query("SELECT * FROM auth_tokens WHERE token=?", values, function(err, result){
       if(err) reject(err);
-      if(result.length == 0) return null;
+      if(result.length == 0) reject('Invalid auth token');
       resolve(auth_token(result[0]));
     })
   });
@@ -30,14 +30,13 @@ var create = function(user){
     values = [token, user.id];
     db.get().query("INSERT INTO auth_tokens (token, user_id) VALUES (?,?)", values, function(err,result){
       if(err) reject(err);
-      resolve(get_by_auth_token(token));
+      resolve(get_by_token(token));
     });
   });
 }
 
 var verify_token = async function(token){
   token = await get_by_token(token);
-  if(token == null) throw("Invalid token");
   return token;
 }
 
