@@ -35,11 +35,12 @@ var create = function(user){
   });
 }
 
-var verify_auth_token = async function(token){
+var verify_token = async function(token){
   token = await get_by_token(token);
   return token;
 }
 
 module.exports = {
-  create: create
+  create: create,
+  verify_token: verify_token
 };
