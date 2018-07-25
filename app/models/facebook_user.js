@@ -39,10 +39,15 @@ var get_from_response = async function(body){
 		let fb_user = await get_by_id(body.id);
 		return fb_user;
 	}catch(err){
-		names = body.name.split(" ");
-		let new_user = await user.create(names[0], names[names.length - 1])
-		fb_user = await create(body.id, new_user.id);
-		return fb_user;
+		if(err === "No match"){
+			names = body.name.split(" ");
+			let new_user = await user.create(names[0], names[names.length - 1])
+			fb_user = await create(body.id, new_user.id);
+			return fb_user;
+		}
+		else{
+			throw(err);
+		}
 	}
 }
 
