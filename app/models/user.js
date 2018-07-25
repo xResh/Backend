@@ -17,9 +17,9 @@ var get_by_id = function(id){
 	return new Promise(function(resolve, reject){
 		values = [id];
 		db.get().query("SELECT * FROM users WHERE id=?", values, function(err,result){
-			if(err) reject(err);
-			if(result.length == 0) reject('No match');
-			resolve(user(result[0]));
+			if(err) return reject(err);
+			if(result.length == 0) return resolve(null);
+			return resolve(user(result[0]));
 		});
 	});
 }
@@ -28,8 +28,8 @@ var create = function(first_name, last_name){
 	return new Promise(function(resolve, reject){
 		values = [first_name, last_name];
 		db.get().query('INSERT INTO users (first_name, last_name) VALUES (?,?)', values, function(err, result){
-			if(err) reject(err);
-			resolve(get_by_id(result.insertId));
+			if(err) return reject(err);
+			return resolve(get_by_id(result.insertId));
 		});
 	});
 }
