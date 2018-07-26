@@ -5,6 +5,9 @@ const db = require(global.include.db);
 
 //git fetch upstream
 //git rebase upstream/branch_name
+//git add .
+//git commit -m message here
+//add after fixing merge conflict
 
 var async = require('asyncawait/async');
 var await = require('asyncawait/await');
@@ -61,7 +64,6 @@ var create_server = async function(req, res){
 		var curr_user = await auth_token.verify_token(req_token);
 		//user verified and returned
 
-
 		//create a server
 		var new_server = await server.create(req_name, req_code, curr_user.user_id);
 
@@ -71,6 +73,7 @@ var create_server = async function(req, res){
 		res.send(200);
 	}
 	catch(err){
+		console.log(err);
 		res.sendStatus(400);
 	}
 }

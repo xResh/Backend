@@ -73,7 +73,7 @@ var get_by_id = function(id){
 
 var create = function(name, code, created_by){
 	return new Promise(function(resolve, reject){
-		values = [name, code, true];
+		values = [name, code, true, created_by];
 		db.get().query('INSERT INTO server (name, code, active, created_by) VALUES (?,?,?,?)', values, async function(err, result){
 			//should check that code in unique, if not an err will be thrown
 			if(err) return reject(err);
