@@ -1,6 +1,5 @@
 const user = require(global.include.model.user);
 const db = require(global.include.db);
-const send_request = require(global.include.helper.send_request);
 const async = require('asyncawait/async');
 const await = require('asyncawait/await');
 
@@ -34,23 +33,7 @@ var create = function(fb_id, user_id){
 	});
 }
 
-var get_by_token = async function(access_token){
-	let body = await send_request.get({
-		url: 'https://graph.facebook.com/me',
-		qs: {'access_token': access_token}
-	});
-
-	let fb_user = await get_by_id(body.id);
-	if(fb_user) return fb_user;
-
-	names = body.name.split(" ");
-	let new_user = await user.create(names[0], names[names.length - 1])
-	fb_user = await create(body.id, new_user.id);
-	return fb_user;
-}
-
 module.exports = {
-	get_by_token: get_by_token,
 	create: create,
 	get_by_id: get_by_id
 };

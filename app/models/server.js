@@ -44,10 +44,10 @@ var get_by_code = function(code){
 var verify_code = async function(code){
 	var returned_server = await get_by_code(code);
 	if(returned_server == null){
-		throw 'No server with code found';
+		throw ('No server with code found');
 	}
 	if(!returned_server.active){
-		throw 'Server is inactive';
+		throw ('Server is inactive');
 	}
 	return returned_server;
 }
