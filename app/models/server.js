@@ -28,10 +28,6 @@ var get_by_code = function(code){
 		values = [code];
 		db.get().query('SELECT * FROM server WHERE code=?', values, function(err,result){
 			
-			// //check if active BEFORE CONVERTING TO BOOLEAN
-			// if(result[0].active === 0){
-			// 	reject('Server is inactive');
-			// }
 			if(err){
 				return reject(err);
 			}

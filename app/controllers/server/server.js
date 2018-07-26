@@ -3,12 +3,6 @@ const server_user = require(global.include.model.server_user);
 const auth_token = require(global.include.model.auth_token);
 const db = require(global.include.db);
 
-//git fetch upstream
-//git rebase upstream/branch_name
-//git add .
-//git commit -m message here
-//add after fixing merge conflict
-
 var async = require('asyncawait/async');
 var await = require('asyncawait/await');
 
