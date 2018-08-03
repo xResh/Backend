@@ -1,0 +1,10 @@
+{
+  "dev": {
+    "host": "localhost",
+    "user": "root",
+    "password" : "",
+    "database": "phare_development",
+    "driver": "mysql",
+    "multipleStatements": true
+  }, "sql-file": true
+}

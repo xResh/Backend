@@ -10,6 +10,7 @@
   "dependencies": {
     "async": "^2.6.1",
     "asyncawait": "^1.0.7",
+    "db-migrate-mysql": "^1.1.10",
     "express": "^4.16.3",
     "fibers": "^2.0.2",
     "mysql": "^2.15.0",
